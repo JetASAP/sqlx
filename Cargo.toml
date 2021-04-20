@@ -153,6 +153,7 @@ paste = "1.0.1"
 serde = { version = "1.0.111", features = ["derive"] }
 serde_json = "1.0.53"
 url = "2.1.1"
+criterion = "0.3"
 
 #
 # Any
@@ -282,3 +283,7 @@ required-features = ["mssql"]
 name = "mssql-macros"
 path = "tests/mssql/macros.rs"
 required-features = ["mssql", "macros"]
+
+[[bench]]
+name = "wasm_querying"
+harness = false
