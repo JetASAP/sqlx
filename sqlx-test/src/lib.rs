@@ -1,4 +1,3 @@
-#[cfg(not(feature = "_rt-wasm-bindgen"))]
 use sqlx::pool::PoolOptions;
 use sqlx::{Connection, Database, Pool};
 use std::env;
