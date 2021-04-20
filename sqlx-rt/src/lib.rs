@@ -10,7 +10,7 @@
 compile_error!(
     "one of the features ['runtime-actix-native-tls', 'runtime-async-std-native-tls', \
      'runtime-tokio-native-tls', 'runtime-actix-rustls', 'runtime-async-std-rustls', \
-     'runtime-tokio-rustls'] must be enabled"
+     'runtime-tokio-rustls', 'runtime-wasm-bindgen'] must be enabled"
 );
 
 #[cfg(any(
