@@ -257,7 +257,7 @@ impl PgConnectOptions {
     ///
     #[cfg(feature = "_rt-wasm-bindgen")]
     pub fn ws_url(mut self) -> Self {
-        self.ws_url = Some(format!("wss://{}:{}", self.host, self.port));
+        self.ws_url = Some(format!("ws://{}:{}", self.host, self.port));
         self
     }
 
