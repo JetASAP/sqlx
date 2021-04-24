@@ -1,0 +1,23 @@
+[package]
+name = "sqlx_tests"
+version = "0.1.0"
+authors = ["abhi"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+sqlx = { path = "../sqlx", features = ["postgres", "runtime-wasm-bindgen"]}
+wasm-bindgen-futures = { version = "^0.3", features = ["futures_0_3"] }
+wasm-bindgen = { version = "0.2.73" }
+ws_stream_wasm = "0.7"
+wasm-bindgen-test = "0.3.0"
+instant = "0.1.9"
+web-sys = { version = "0.3.50", features = ["console", "Performance"] }
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.0"
+
+[[test]]
+name = "selects"
+path = "src/selects.rs"
