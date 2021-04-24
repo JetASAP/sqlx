@@ -5,6 +5,7 @@ members = [
     "sqlx-rt",
     "sqlx-macros",
     "sqlx-test",
+    "sqlx-wasm-test",
     "sqlx-cli",
     "sqlx-bench",
     "examples/mysql/todos",

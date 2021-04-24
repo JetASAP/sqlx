@@ -39,10 +39,10 @@ pub trait IntoArguments<'q, DB: HasArguments<'q>>: Sized + Send {
 }
 
 #[cfg(feature = "_rt-wasm-bindgen")]
- pub trait IntoArguments<'q, DB: HasArguments<'q>>: Sized {
-     fn into_arguments(self) -> <DB as HasArguments<'q>>::Arguments;
- }
- 
+pub trait IntoArguments<'q, DB: HasArguments<'q>>: Sized {
+    fn into_arguments(self) -> <DB as HasArguments<'q>>::Arguments;
+}
+
 // NOTE: required due to lack of lazy normalization
 #[allow(unused_macros)]
 macro_rules! impl_into_arguments_for_arguments {

@@ -141,10 +141,10 @@ impl Connection for PgConnection {
         self.execute("/* SQLx ping */").map_ok(|_| ()).boxed()
     }
     #[cfg(feature = "_rt-wasm-bindgen")]
-     fn ping(&mut self) -> BoxFuture<'_, Result<(), Error>> {
-         // By sending a comment we avoid an error if the connection was in the middle of a rowset
-         self.execute("/* SQLx ping */").map_ok(|_| ()).boxed_local()
-     }
+    fn ping(&mut self) -> BoxFuture<'_, Result<(), Error>> {
+        // By sending a comment we avoid an error if the connection was in the middle of a rowset
+        self.execute("/* SQLx ping */").map_ok(|_| ()).boxed_local()
+    }
 
     fn begin(&mut self) -> BoxFuture<'_, Result<Transaction<'_, Self::Database>, Error>>
     where

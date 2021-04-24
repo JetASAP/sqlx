@@ -156,10 +156,10 @@ impl AsyncWrite for Socket {
     #[cfg(feature = "_rt-async-std")]
     fn poll_close(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
         match &mut *self {
-           Socket::Tcp(s) => Pin::new(s).poll_close(cx),
+            Socket::Tcp(s) => Pin::new(s).poll_close(cx),
 
-           #[cfg(all(unix, not(feature = "_rt-wasm-bindgen")))]
-           Socket::Unix(s) => Pin::new(s).poll_close(cx),
+            #[cfg(all(unix, not(feature = "_rt-wasm-bindgen")))]
+            Socket::Unix(s) => Pin::new(s).poll_close(cx),
         }
     }
 
@@ -170,8 +170,8 @@ impl AsyncWrite for Socket {
                 .poll_close(cx)
                 .map_err(|_| io::Error::new(io::ErrorKind::Other, "error closing ws stream")),
 
-           #[cfg(all(unix, not(feature = "_rt-wasm-bindgen")))]
-           Socket::Unix(s) => Pin::new(s).poll_close(cx),
+            #[cfg(all(unix, not(feature = "_rt-wasm-bindgen")))]
+            Socket::Unix(s) => Pin::new(s).poll_close(cx),
         }
     }
 }

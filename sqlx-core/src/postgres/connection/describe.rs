@@ -11,7 +11,7 @@ use crate::HashMap;
 #[cfg(not(feature = "_rt-wasm-bindgen"))]
 use futures_core::future::BoxFuture;
 #[cfg(feature = "_rt-wasm-bindgen")]
- use futures_core::future::LocalBoxFuture as BoxFuture;
+use futures_core::future::LocalBoxFuture as BoxFuture;
 use std::convert::TryFrom;
 use std::fmt::Write;
 use std::sync::Arc;

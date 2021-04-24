@@ -5,26 +5,12 @@
 // use wasm_bindgen_futures::JsFuture;
 use wasm_bindgen_test::*;
 // use wasm_bindgen::prelude::*;
-use sqlx_tests::new;
+use sqlx_wasm_test::{new, time_query};
 use web_sys::console;
-use instant::Instant;
-
 
 #[wasm_bindgen_test]
 async fn select_query_small() {
-    let mut conn = new().await;
-
-    let start = performance.now();
-
-    for _ in 0..3u8 {
-        sqlx::query("select * from airports")
-            .fetch_all(&mut conn)
-            .await;
-    }
-
-    let end = performance.now();
-    web_sys::console::log_1(&format!("Avg time is {}", (end - start) / 3f64).into());
-    // assert!(airports.len() == 396);
+    time_query!("select * from airports");
 }
 
 async fn select_query_medium() {
@@ -32,6 +18,7 @@ async fn select_query_medium() {
 
     let airports = sqlx::query("select * from medium")
         .fetch_all(&mut conn)
-        .await.unwrap();
+        .await
+        .unwrap();
     assert!(airports.len() == 396);
 }
