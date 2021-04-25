@@ -1,24 +1,26 @@
-// use sqlx::Row;
-// use sqlx::{postgres::PgRow, Connection};
-// use sqlx::{Database, PgConnection, Postgres};
-// use wasm_bindgen_futures::futures_0_3::spawn_local as spawn;
-// use wasm_bindgen_futures::JsFuture;
+use sqlx_wasm_test::time_query;
 use wasm_bindgen_test::*;
-// use wasm_bindgen::prelude::*;
-use sqlx_wasm_test::{new, time_query};
-use web_sys::console;
 
 #[wasm_bindgen_test]
 async fn select_query_small() {
-    time_query!("select * from airports");
+    time_query!(
+        "small",
+        "SELECT generate_series(1,100) AS id, md5(random()::text) AS descr"
+    );
 }
 
+#[wasm_bindgen_test]
 async fn select_query_medium() {
-    let mut conn = new().await;
+    time_query!(
+        "medium",
+        "SELECT generate_series(1,1000) AS id, md5(random()::text) AS descr"
+    );
+}
 
-    let airports = sqlx::query("select * from medium")
-        .fetch_all(&mut conn)
-        .await
-        .unwrap();
-    assert!(airports.len() == 396);
+#[wasm_bindgen_test]
+async fn select_query_large() {
+    time_query!(
+        "large",
+        "SELECT generate_series(1,10000) AS id, md5(random()::text) AS descr"
+    );
 }

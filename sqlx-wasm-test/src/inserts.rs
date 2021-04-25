@@ -1,18 +1,20 @@
-#![feature(test)]
-
-extern crate test;
-
+use sqlx::Executor;
+use sqlx_wasm_test::time_insert_query;
 use wasm_bindgen_test::*;
-wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
 
-#[cfg(test)]
-mod tests {
-use sqlx::Row;
-use sqlx::{postgres::PgRow, Connection};
-use sqlx::{Database, PgConnection, Postgres};
-use wasm_bindgen_futures::futures_0_3::spawn_local as spawn;
-use wasm_bindgen_futures::JsFuture;
-use wasm_bindgen_test::*;
-use wasm_bindgen::prelude::*;
+#[wasm_bindgen_test]
+async fn insert_query_small() {
+    time_insert_query!("small", 100u32);
 }
 
+#[ignore]
+#[wasm_bindgen_test]
+async fn insert_query_medium() {
+    time_insert_query!("medium", 1000u32);
+}
+
+#[ignore]
+#[wasm_bindgen_test]
+async fn insert_query_large() {
+    time_insert_query!("large", 10000u32);
+}

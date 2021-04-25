@@ -18,17 +18,43 @@ pub async fn new() -> PgConnection {
 
 #[macro_export]
 macro_rules! time_query {
-    ($x:expr) => {
-        let mut conn = new().await;
+    ($n:expr, $q:expr) => {
+        let mut conn = sqlx_wasm_test::new().await;
 
         let performance = web_sys::window().unwrap().performance().unwrap();
         let start = performance.now();
 
         for _ in 0..3u8 {
-            sqlx::query($x).fetch_all(&mut conn).await;
+            sqlx::query($q).fetch_all(&mut conn).await;
         }
 
         let end = performance.now();
-        web_sys::console::log_1(&format!("Avg time is {}", (end - start) / 3f64).into());
+        web_sys::console::log_1(&format!("{}: Avg time is {}", $n, (end - start) / 3f64).into());
+    };
+}
+
+#[macro_export]
+macro_rules! time_insert_query {
+    ($n:expr, $count:literal) => {
+        let mut conn = sqlx_wasm_test::new().await;
+        conn.execute("create temp table bench_inserts (id integer, desc text)")
+            .await;
+
+        let performance = web_sys::window().unwrap().performance().unwrap();
+        let start = performance.now();
+
+        for _ in 0..3u8 {
+            for i in 0..$count {
+                sqlx::query(&format!(
+                    "insert into bench_inserts (id, desc) values ({}, md5(random()::text))",
+                    i
+                ))
+                .execute(&mut conn)
+                .await;
+            }
+        }
+
+        let end = performance.now();
+        web_sys::console::log_1(&format!("{}: Avg time is {}", $n, (end - start) / 3f64).into());
     };
 }
