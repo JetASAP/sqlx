@@ -9,7 +9,7 @@ use std::task::{Context, Poll};
 use sqlx_rt::{AsyncRead, AsyncWrite, TcpStream};
 
 #[cfg(feature = "_rt-wasm-bindgen")]
-use sqlx_rt::{console, AsyncRead, AsyncWrite, IoStream, WsMeta, WsStreamIo};
+use sqlx_rt::{AsyncRead, AsyncWrite, IoStream, WsMeta, WsStreamIo};
 #[cfg(feature = "_rt-wasm-bindgen")]
 type WSIoStream = IoStream<WsStreamIo, Vec<u8>>;
 

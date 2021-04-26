@@ -2,7 +2,6 @@
 
 extern crate test;
 
-use wasm_bindgen_test::*;
 wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
 
 use sqlx::Connection;
@@ -25,7 +24,7 @@ macro_rules! time_query {
         let start = performance.now();
 
         for _ in 0..3u8 {
-            sqlx::query($q).fetch_all(&mut conn).await;
+            let _ = sqlx::query($q).fetch_all(&mut conn).await;
         }
 
         let end = performance.now();
@@ -45,7 +44,7 @@ macro_rules! time_insert_query {
 
         for _ in 0..3u8 {
             for i in 0..$count {
-                sqlx::query(&format!(
+                let _ = sqlx::query(&format!(
                     "insert into bench_inserts (id, desc) values ({}, md5(random()::text))",
                     i
                 ))
