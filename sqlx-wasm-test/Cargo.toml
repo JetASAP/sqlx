@@ -27,3 +27,7 @@ path = "src/selects.rs"
 [[test]]
 name = "inserts"
 path = "src/inserts.rs"
+
+[[test]]
+name = "updates"
+path = "src/updates.rs"
