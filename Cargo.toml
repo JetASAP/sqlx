@@ -260,6 +260,11 @@ name = "postgres-derives"
 path = "tests/postgres/derives.rs"
 required-features = ["postgres", "macros"]
 
+[[test]]
+name = "pg-deletes-bench"
+path = "tests/postgres/deletes_custom_bench.rs"
+required-features = ["postgres"]
+
 #
 # Microsoft SQL Server (MSSQL)
 #
