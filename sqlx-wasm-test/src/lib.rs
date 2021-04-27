@@ -92,3 +92,39 @@ macro_rules! time_update_query {
         web_sys::console::log_1(&format!("{}: Avg time is {}", $n, (end - start) / 3f64).into());
     };
 }
+
+#[macro_export]
+macro_rules! time_delete_query {
+    ($n:expr, $count:literal) => {
+        let mut conn = sqlx_wasm_test::new().await;
+        conn.execute("create temp table bench_deletes (id integer, descr text, primary key(id))")
+            .await;
+
+        conn.execute("create bitmap index id_idx on bench_deletes (id)")
+            .await;
+
+        let _ = sqlx::query(&format!(
+            "insert into bench_deletes (id, descr) select generate_series(1,{}) AS id, md5(random()::text) AS descr",
+            $count
+        ))
+
+        .execute(&mut conn)
+        .await;
+        let performance = web_sys::window().unwrap().performance().unwrap();
+        let start = performance.now();
+
+        for _ in 0..3u8 {
+            for i in 1..$count {
+                let _ = sqlx::query(&format!(
+                    "delete from bench_deletes where id = {}",
+                    i
+                ))
+                .execute(&mut conn)
+                .await;
+            }
+        }
+
+        let end = performance.now();
+        web_sys::console::log_1(&format!("{}: Avg time is {}", $n, (end - start) / 3f64).into());
+    };
+}

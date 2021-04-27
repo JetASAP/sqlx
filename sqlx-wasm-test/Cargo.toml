@@ -31,3 +31,7 @@ path = "src/inserts.rs"
 [[test]]
 name = "updates"
 path = "src/updates.rs"
+
+[[test]]
+name = "deletes"
+path = "src/deletes.rs"
