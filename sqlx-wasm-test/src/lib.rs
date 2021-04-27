@@ -62,8 +62,15 @@ macro_rules! time_insert_query {
 macro_rules! time_update_query {
     ($n:expr, $count:literal) => {
         let mut conn = sqlx_wasm_test::new().await;
-        conn.execute(&*format!("create temp table bench_updates as SELECT generate_series(1,{}) AS id, md5(random()::text) AS descr", $count))
+        conn.execute("create temp table bench_updates (id integer, descr text, primary key(id))")
             .await;
+
+        let _ = sqlx::query(&format!(
+            "insert into bench_updates (id, descr) select generate_series(1,{}) AS id, md5(random()::text) AS descr",
+            $count
+        ))
+        .execute(&mut conn)
+        .await;
 
         let performance = web_sys::window().unwrap().performance().unwrap();
         let start = performance.now();
