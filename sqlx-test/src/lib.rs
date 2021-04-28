@@ -274,7 +274,6 @@ macro_rules! time_update_query {
             "insert into bench_updates (id, descr) select generate_series(1,{}) AS id, md5(random()::text) AS descr",
             $count
         ))
-
         .execute(&mut conn)
         .await;
 
@@ -292,5 +291,34 @@ macro_rules! time_update_query {
 
         let end = Instant::now();
         println!("{}: Avg time is {}", $n, end.duration_since(start).as_millis() / 3u128);
+    };
+}
+
+#[macro_export]
+macro_rules! time_insert_query {
+    ($n:expr, $count:literal) => {
+        let mut conn = new::<Postgres>().await.unwrap();
+        conn.execute("create temp table bench_inserts (id integer, descr text)")
+            .await;
+
+        let start = Instant::now();
+
+        for _ in 0..3u8 {
+            for i in 0..$count {
+                let _ = sqlx::query(&format!(
+                    "insert into bench_inserts (id, desc) values ({}, md5(random()::text))",
+                    i
+                ))
+                .execute(&mut conn)
+                .await;
+            }
+        }
+
+        let end = Instant::now();
+        println!(
+            "{}: Avg time is {}",
+            $n,
+            end.duration_since(start).as_millis() / 3u128
+        );
     };
 }
