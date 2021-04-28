@@ -322,3 +322,24 @@ macro_rules! time_insert_query {
         );
     };
 }
+
+#[macro_export]
+macro_rules! time_query {
+    ($n:expr, $q:expr) => {
+        let mut conn = new::<Postgres>().await.unwrap();
+
+        let start = Instant::now();
+
+        for _ in 0..3u8 {
+            let _ = sqlx::query($q).fetch_all(&mut conn).await;
+        }
+
+        let end = Instant::now();
+
+        println!(
+            "{}: Avg time is {}",
+            $n,
+            end.duration_since(start).as_millis() / 3u128
+        );
+    };
+}

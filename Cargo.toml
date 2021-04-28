@@ -275,6 +275,11 @@ name = "pg-inserts-bench"
 path = "tests/postgres/inserts_custom_bench.rs"
 required-features = ["postgres"]
 
+[[test]]
+name = "pg-selects-bench"
+path = "tests/postgres/selects_custom_bench.rs"
+required-features = ["postgres"]
+
 #
 # Microsoft SQL Server (MSSQL)
 #
