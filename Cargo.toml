@@ -265,6 +265,11 @@ name = "pg-deletes-bench"
 path = "tests/postgres/deletes_custom_bench.rs"
 required-features = ["postgres"]
 
+[[test]]
+name = "pg-updates-bench"
+path = "tests/postgres/updates_custom_bench.rs"
+required-features = ["postgres"]
+
 #
 # Microsoft SQL Server (MSSQL)
 #

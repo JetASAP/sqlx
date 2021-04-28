@@ -1,6 +1,6 @@
 use sqlx::postgres::Postgres;
 use sqlx::Executor;
-use sqlx_test::{new, setup_if_needed};
+use sqlx_test::{new, setup_if_needed, time_delete_query};
 use std::time::Instant;
 
 async fn deletes_query_small() {
