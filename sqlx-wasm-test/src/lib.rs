@@ -36,7 +36,8 @@ macro_rules! time_query {
 macro_rules! time_insert_query {
     ($n:expr, $count:literal) => {
         let mut conn = sqlx_wasm_test::new().await;
-        conn.execute("create temp table bench_inserts (id integer, descr text)")
+        let _ = conn
+            .execute("create temp table bench_inserts (id integer, descr text)")
             .await;
 
         let performance = web_sys::window().unwrap().performance().unwrap();
@@ -62,9 +63,9 @@ macro_rules! time_insert_query {
 macro_rules! time_update_query {
     ($n:expr, $count:literal) => {
         let mut conn = sqlx_wasm_test::new().await;
-        conn.execute("create temp table bench_updates (id integer, descr text, primary key(id))")
+        let _ = conn.execute("create temp table bench_updates (id integer, descr text, primary key(id))")
             .await;
-        conn.execute("create bitmap index id_idx on bench_updates (id)")
+        let _ = conn.execute("create bitmap index id_idx on bench_updates (id)")
             .await;
 
         let _ = sqlx::query(&format!(
@@ -97,10 +98,10 @@ macro_rules! time_update_query {
 macro_rules! time_delete_query {
     ($n:expr, $count:literal) => {
         let mut conn = sqlx_wasm_test::new().await;
-        conn.execute("create temp table bench_deletes (id integer, descr text, primary key(id))")
+        let _ = conn.execute("create temp table bench_deletes (id integer, descr text, primary key(id))")
             .await;
 
-        conn.execute("create bitmap index id_idx on bench_deletes (id)")
+        let _ = conn.execute("create bitmap index id_idx on bench_deletes (id)")
             .await;
 
         let _ = sqlx::query(&format!(

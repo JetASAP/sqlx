@@ -35,3 +35,7 @@ path = "src/updates.rs"
 [[test]]
 name = "deletes"
 path = "src/deletes.rs"
+
+[[test]]
+name = "select_queries"
+path = "src/selects_tests.rs"
