@@ -1,5 +1,5 @@
 use futures::TryStreamExt;
-use sqlx::postgres::{PgDatabaseError, PgErrorPosition, PgRow, PgSeverity};
+use sqlx::postgres::{PgDatabaseError, PgErrorPosition, PgRow, PgSeverity, Postgres};
 use sqlx::{Column, Connection, Executor, Row, Statement, TypeInfo};
 use sqlx_wasm_test::new;
 use wasm_bindgen_test::*;
@@ -119,4 +119,129 @@ async fn it_can_prepare_then_execute() {
     let tweet_text: &str = row.try_get("text").unwrap();
 
     assert_eq!(tweet_text, "Hello, World");
+}
+
+#[wasm_bindgen_test]
+async fn it_supports_domain_types_in_composite_domain_types() {
+    #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+    struct MonthId(i16);
+
+    impl sqlx::Type<Postgres> for MonthId {
+        fn type_info() -> sqlx::postgres::PgTypeInfo {
+            sqlx::postgres::PgTypeInfo::with_name("month_id")
+        }
+
+        fn compatible(ty: &sqlx::postgres::PgTypeInfo) -> bool {
+            *ty == Self::type_info()
+        }
+    }
+
+    impl<'r> sqlx::Decode<'r, Postgres> for MonthId {
+        fn decode(
+            value: sqlx::postgres::PgValueRef<'r>,
+        ) -> Result<Self, Box<dyn std::error::Error + 'static + Send + Sync>> {
+            Ok(Self(
+                <i16 as sqlx::Decode<Postgres>>::decode(value).unwrap(),
+            ))
+        }
+    }
+
+    impl<'q> sqlx::Encode<'q, Postgres> for MonthId {
+        fn encode_by_ref(
+            &self,
+            buf: &mut sqlx::postgres::PgArgumentBuffer,
+        ) -> sqlx::encode::IsNull {
+            self.0.encode(buf)
+        }
+    }
+
+    #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+    struct WinterYearMonth {
+        year: i32,
+        month: MonthId,
+    }
+
+    impl sqlx::Type<Postgres> for WinterYearMonth {
+        fn type_info() -> sqlx::postgres::PgTypeInfo {
+            sqlx::postgres::PgTypeInfo::with_name("winter_year_month")
+        }
+
+        fn compatible(ty: &sqlx::postgres::PgTypeInfo) -> bool {
+            *ty == Self::type_info()
+        }
+    }
+
+    impl<'r> sqlx::Decode<'r, Postgres> for WinterYearMonth {
+        fn decode(
+            value: sqlx::postgres::PgValueRef<'r>,
+        ) -> Result<Self, Box<dyn std::error::Error + 'static + Send + Sync>> {
+            let mut decoder = sqlx::postgres::types::PgRecordDecoder::new(value).unwrap();
+
+            let year = decoder.try_decode::<i32>().unwrap();
+            let month = decoder.try_decode::<MonthId>().unwrap();
+
+            Ok(Self { year, month })
+        }
+    }
+
+    impl<'q> sqlx::Encode<'q, Postgres> for WinterYearMonth {
+        fn encode_by_ref(
+            &self,
+            buf: &mut sqlx::postgres::PgArgumentBuffer,
+        ) -> sqlx::encode::IsNull {
+            let mut encoder = sqlx::postgres::types::PgRecordEncoder::new(buf);
+            encoder.encode(self.year);
+            encoder.encode(self.month);
+            encoder.finish();
+            sqlx::encode::IsNull::No
+        }
+    }
+
+    let mut conn = new().await;
+
+    let _ = conn
+        .execute(
+            "
+            CREATE DOMAIN month_id AS INT2 CHECK (1 <= value AND value <= 12);
+            CREATE TYPE year_month AS (year INT4, month month_id);
+            CREATE DOMAIN winter_year_month AS year_month CHECK ((value).month <= 3);
+            CREATE temp TABLE heating_bills (
+              month winter_year_month NOT NULL PRIMARY KEY,
+              cost INT4 NOT NULL
+            )",
+        )
+        .await;
+
+    {
+        let result = sqlx::query("DELETE FROM heating_bills;")
+            .execute(&mut conn)
+            .await;
+
+        let result = result.unwrap();
+        assert_eq!(result.rows_affected(), 1);
+    }
+
+    {
+        let result = sqlx::query(
+            "INSERT INTO heating_bills(month, cost) VALUES($1::winter_year_month, 100);",
+        )
+        .bind(WinterYearMonth {
+            year: 2021,
+            month: MonthId(1),
+        })
+        .execute(&mut conn)
+        .await;
+
+        let result = result.unwrap();
+        assert_eq!(result.rows_affected(), 1);
+    }
+
+    {
+        let result = sqlx::query("DELETE FROM heating_bills;")
+            .execute(&mut conn)
+            .await;
+
+        let result = result.unwrap();
+        assert_eq!(result.rows_affected(), 1);
+    }
 }
