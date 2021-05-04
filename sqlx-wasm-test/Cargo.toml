@@ -16,6 +16,7 @@ ws_stream_wasm = "0.7"
 wasm-bindgen-test = "0.3.0"
 instant = "0.1.9"
 web-sys = { version = "0.3.50", features = ["console", "Performance"] }
+futures = "0.3.14"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.0"

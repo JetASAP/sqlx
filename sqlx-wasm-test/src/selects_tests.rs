@@ -1,5 +1,5 @@
 use futures::TryStreamExt;
-use sqlx::postgres::PgRow;
+use sqlx::postgres::{PgDatabaseError, PgErrorPosition, PgRow, PgSeverity};
 use sqlx::Executor;
 use sqlx::Row;
 use sqlx_wasm_test::new;
@@ -50,4 +50,28 @@ CREATE TEMPORARY TABLE users (id INTEGER PRIMARY KEY);
         .unwrap();
 
     assert_eq!(sum, 55);
+}
+
+#[wasm_bindgen_test]
+async fn it_can_inspect_errors() {
+    let mut conn = new().await;
+
+    let res: Result<_, sqlx::Error> = sqlx::query("select f").execute(&mut conn).await;
+    let err = res.unwrap_err();
+
+    // can also do [as_database_error] or use `match ..`
+    let err = err.into_database_error().unwrap();
+
+    assert_eq!(err.message(), "column \"f\" does not exist");
+    assert_eq!(err.code().as_deref(), Some("42703"));
+
+    // can also do [downcast_ref]
+    let err: Box<PgDatabaseError> = err.downcast();
+
+    assert_eq!(err.severity(), PgSeverity::Error);
+    assert_eq!(err.message(), "column \"f\" does not exist");
+    assert_eq!(err.code(), "42703");
+    assert_eq!(err.position(), Some(PgErrorPosition::Original(8)));
+    assert_eq!(err.routine(), Some("errorMissingColumn"));
+    assert_eq!(err.constraint(), None);
 }
