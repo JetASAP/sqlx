@@ -2617,7 +2617,6 @@ dependencies = [
 name = "sqlx-wasm-test"
 version = "0.1.0"
 dependencies = [
- "anyhow",
  "futures 0.3.14",
  "instant",
  "sqlx",

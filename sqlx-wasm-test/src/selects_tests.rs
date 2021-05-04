@@ -1,7 +1,6 @@
 use futures::TryStreamExt;
 use sqlx::postgres::{PgDatabaseError, PgErrorPosition, PgRow, PgSeverity};
-use sqlx::Executor;
-use sqlx::Row;
+use sqlx::{Column, Connection, Executor, Row, Statement, TypeInfo};
 use sqlx_wasm_test::new;
 use wasm_bindgen_test::*;
 
@@ -74,4 +73,50 @@ async fn it_can_inspect_errors() {
     assert_eq!(err.position(), Some(PgErrorPosition::Original(8)));
     assert_eq!(err.routine(), Some("errorMissingColumn"));
     assert_eq!(err.constraint(), None);
+}
+
+#[wasm_bindgen_test]
+async fn it_can_prepare_then_execute() {
+    let mut conn = new().await;
+    let _ = conn
+        .execute(
+            "create temp table tweet (id  BIGSERIAL PRIMARY KEY,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                text       TEXT        NOT NULL,
+                owner_id   BIGINT
+            )",
+        )
+        .await;
+    let mut tx = conn.begin().await.unwrap();
+
+    let tweet_id: i64 =
+        sqlx::query_scalar("INSERT INTO tweet (text) VALUES ( 'Hello, World' ) RETURNING id")
+            .fetch_one(&mut tx)
+            .await
+            .unwrap();
+
+    let statement = tx
+        .prepare("SELECT * FROM tweet WHERE id = $1")
+        .await
+        .unwrap();
+
+    assert_eq!(statement.column(0).name(), "id");
+    assert_eq!(statement.column(1).name(), "created_at");
+    assert_eq!(statement.column(2).name(), "text");
+    assert_eq!(statement.column(3).name(), "owner_id");
+
+    assert_eq!(statement.column(0).type_info().name(), "INT8");
+    assert_eq!(statement.column(1).type_info().name(), "TIMESTAMPTZ");
+    assert_eq!(statement.column(2).type_info().name(), "TEXT");
+    assert_eq!(statement.column(3).type_info().name(), "INT8");
+
+    let row = statement
+        .query()
+        .bind(tweet_id)
+        .fetch_one(&mut tx)
+        .await
+        .unwrap();
+    let tweet_text: &str = row.try_get("text").unwrap();
+
+    assert_eq!(tweet_text, "Hello, World");
 }
