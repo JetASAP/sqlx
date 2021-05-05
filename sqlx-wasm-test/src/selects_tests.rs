@@ -76,6 +76,51 @@ async fn it_can_inspect_errors() {
 }
 
 #[wasm_bindgen_test]
+async fn it_can_inspect_constraint_errors() {
+    let mut conn = new().await;
+
+    let _ = conn
+        .execute(
+            r#"
+                CREATE TABLE products (
+                    product_no INTEGER,
+                    name TEXT,
+                    price NUMERIC CHECK (price > 0)
+                );
+            "#,
+        )
+        .await;
+
+    let res: Result<_, sqlx::Error> =
+        sqlx::query("INSERT INTO products VALUES (1, 'Product 1', 0);")
+            .execute(&mut conn)
+            .await;
+    let err = res.unwrap_err();
+
+    // can also do [as_database_error] or use `match ..`
+    let err = err.into_database_error().unwrap();
+
+    assert_eq!(
+        err.message(),
+        "new row for relation \"products\" violates check constraint \"products_price_check\""
+    );
+    assert_eq!(err.code().as_deref(), Some("23514"));
+
+    // can also do [downcast_ref]
+    let err: Box<PgDatabaseError> = err.downcast();
+
+    assert_eq!(err.severity(), PgSeverity::Error);
+    assert_eq!(
+        err.message(),
+        "new row for relation \"products\" violates check constraint \"products_price_check\""
+    );
+    assert_eq!(err.code(), "23514");
+    assert_eq!(err.position(), None);
+    assert_eq!(err.routine(), Some("ExecConstraints"));
+    assert_eq!(err.constraint(), Some("products_price_check"));
+}
+
+#[wasm_bindgen_test]
 async fn it_can_prepare_then_execute() {
     let mut conn = new().await;
     let _ = conn
@@ -202,9 +247,6 @@ async fn it_supports_domain_types_in_composite_domain_types() {
     let _ = conn
         .execute(
             "
-            CREATE DOMAIN month_id AS INT2 CHECK (1 <= value AND value <= 12);
-            CREATE TYPE year_month AS (year INT4, month month_id);
-            CREATE DOMAIN winter_year_month AS year_month CHECK ((value).month <= 3);
             CREATE temp TABLE heating_bills (
               month winter_year_month NOT NULL PRIMARY KEY,
               cost INT4 NOT NULL
@@ -218,7 +260,7 @@ async fn it_supports_domain_types_in_composite_domain_types() {
             .await;
 
         let result = result.unwrap();
-        assert_eq!(result.rows_affected(), 1);
+        assert_eq!(result.rows_affected(), 0);
     }
 
     {
