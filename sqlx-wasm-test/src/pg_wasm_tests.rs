@@ -324,43 +324,10 @@ async fn test_listener_cleanup() {
     let mut listener = PgListener::connect(sqlx_wasm_test::URL).await.unwrap();
     assert!(listener.listen("test_channel").await.is_ok());
 
-    // Checks for a notification on the test channel
-    /*
-    async fn try_recv(listener: &mut PgListener) -> anyhow::Result<bool> {
-        match timeout(Duration::from_millis(100), listener.recv()).await {
-            Ok(res) => {
-                res?;
-                Ok(true)
-            }
-            Err(_) => Ok(false),
-        }
-    }
-
-    // Check no notification is received before one is sent
-    assert!(listener.recv().await.is_err(), "Notification not sent");
-    */
-    // Check notification is sent and received
     notify_conn.execute("NOTIFY test_channel").await.unwrap();
 
     assert!(
         listener.recv().await.is_ok(),
         "Notification sent and received"
     );
-    /*
-    assert!(
-        listener.recv().await.is_err(),
-        "Notification is not duplicated"
-    );
-
-    // Test that cleanup stops listening on the channel
-    drop(listener);
-    let mut listener = PgListener::connect(sqlx_wasm_test::URL).await.unwrap();
-
-    // Check notification is sent but not received
-    notify_conn.execute("NOTIFY test_channel").await.unwrap();
-    assert!(
-        listener.recv().await.is_err(),
-        "Notification is not received on fresh listener"
-    );
-    */
 }
