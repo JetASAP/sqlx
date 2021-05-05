@@ -1,4 +1,5 @@
 use futures::TryStreamExt;
+use serde_json;
 use sqlx::postgres::{PgDatabaseError, PgErrorPosition, PgRow, PgSeverity, Postgres};
 use sqlx::{Column, Connection, Executor, Row, Statement, TypeInfo};
 use sqlx_wasm_test::new;
@@ -288,7 +289,6 @@ async fn it_supports_domain_types_in_composite_domain_types() {
     }
 }
 
-#[cfg(feature = "json")]
 #[wasm_bindgen_test]
 async fn it_describes_and_inserts_json_and_jsonb() {
     let mut conn = new().await;

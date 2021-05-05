@@ -2619,6 +2619,7 @@ version = "0.1.0"
 dependencies = [
  "futures 0.3.14",
  "instant",
+ "serde_json",
  "sqlx",
  "wasm-bindgen",
  "wasm-bindgen-futures 0.3.27",
