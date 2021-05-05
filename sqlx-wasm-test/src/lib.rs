@@ -7,7 +7,7 @@ wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
 use sqlx::Connection;
 use sqlx::{Database, PgConnection, Postgres};
 
-const URL: &str = "postgresql://paul:pass123@127.0.0.1:8080/jetasap_dev";
+pub const URL: &str = "postgresql://paul:pass123@127.0.0.1:8080/jetasap_dev";
 
 pub async fn new() -> PgConnection {
     <Postgres as Database>::Connection::connect(URL)
