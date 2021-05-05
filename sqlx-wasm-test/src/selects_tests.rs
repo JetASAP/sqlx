@@ -287,3 +287,29 @@ async fn it_supports_domain_types_in_composite_domain_types() {
         assert_eq!(result.rows_affected(), 1);
     }
 }
+
+#[cfg(feature = "json")]
+#[wasm_bindgen_test]
+async fn it_describes_and_inserts_json_and_jsonb() {
+    let mut conn = new().await;
+
+    let _ = conn
+        .execute(
+            r#"
+                CREATE TEMPORARY TABLE json_stuff (obj json, obj2 jsonb);
+            "#,
+        )
+        .await;
+
+    let query = "INSERT INTO json_stuff (obj, obj2) VALUES ($1, $2)";
+    let _ = conn.describe(query).await;
+
+    let done = sqlx::query(query)
+        .bind(serde_json::json!({ "a": "a" }))
+        .bind(serde_json::json!({ "a": "a" }))
+        .execute(&mut conn)
+        .await
+        .unwrap();
+
+    assert_eq!(done.rows_affected(), 1);
+}
