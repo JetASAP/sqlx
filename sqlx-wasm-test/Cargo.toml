@@ -24,20 +24,24 @@ wasm-bindgen-test = "0.3.0"
 
 [[test]]
 name = "selects"
-path = "src/selects.rs"
+path = "src/selects_bench.rs"
 
 [[test]]
 name = "inserts"
-path = "src/inserts.rs"
+path = "src/inserts_bench.rs"
 
 [[test]]
 name = "updates"
-path = "src/updates.rs"
+path = "src/updates_bench.rs"
 
 [[test]]
 name = "deletes"
-path = "src/deletes.rs"
+path = "src/deletes_bench.rs"
 
 [[test]]
 name = "select_queries"
-path = "src/selects_tests.rs"
+path = "src/pg_wasm_tests.rs"
+
+[[test]]
+name = "types"
+path = "src/pg_types_tests.rs"

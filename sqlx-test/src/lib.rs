@@ -88,6 +88,7 @@ macro_rules! test_prepared_type {
 }
 
 // Test type decoding for the simple (unprepared) query API
+#[cfg(not("_rt-wasm-bindgen"))]
 #[macro_export]
 macro_rules! test_unprepared_type {
     ($name:ident<$ty:ty>($db:ident, $($text:literal == $value:expr),+ $(,)?)) => {
@@ -111,6 +112,33 @@ macro_rules! test_unprepared_type {
                 )+
 
                 Ok(())
+            }
+        }
+    }
+}
+
+#[cfg("_rt-wasm-bindgen")]
+#[macro_export]
+macro_rules! test_unprepared_type {
+    ($name:ident<$ty:ty>($db:ident, $($text:literal == $value:expr),+ $(,)?)) => {
+        paste::item! {
+            #[wasm_bindgen_test]
+            async fn [< test_unprepared_type_ $name >] () {
+                use sqlx::prelude::*;
+                use futures::TryStreamExt;
+
+                let mut conn = new::<$db>().await.unwrap();
+
+                $(
+                    let query = format!("SELECT {}", $text);
+                    let mut s = conn.fetch(&*query);
+                    let row = s.try_next().await?.unwrap();
+                    let rec = row.try_get::<$ty, _>(0)?;
+
+                    assert!($value == rec);
+
+                    drop(s);
+                )+
             }
         }
     }
@@ -146,6 +174,7 @@ macro_rules! __test_prepared_decode_type {
 }
 
 // Test type encoding and decoding for the prepared query API
+#[cfg(not("_rt-wasm-bindgen"))]
 #[macro_export]
 macro_rules! __test_prepared_type {
     ($name:ident<$ty:ty>($db:ident, $sql:expr, $($text:literal == $value:expr),+ $(,)?)) => {
@@ -155,6 +184,55 @@ macro_rules! __test_prepared_type {
                 use sqlx::Row;
 
                 let mut conn = sqlx_test::new::<$db>().await?;
+
+                $(
+                    let query = format!($sql, $text);
+
+                    let row = sqlx::query(&query)
+                        .bind($value)
+                        .bind($value)
+                        .fetch_one(&mut conn)
+                        .await?;
+
+                    let matches: i32 = row.try_get(0)?;
+                    let returned: $ty = row.try_get(1)?;
+                    let round_trip: $ty = row.try_get(2)?;
+
+                    assert!(matches != 0,
+                            "[1] DB value mismatch; given value: {:?}\n\
+                             as returned: {:?}\n\
+                             round-trip: {:?}",
+                            $value, returned, round_trip);
+
+                    assert_eq!($value, returned,
+                            "[2] DB value mismatch; given value: {:?}\n\
+                                     as returned: {:?}\n\
+                                     round-trip: {:?}",
+                                    $value, returned, round_trip);
+
+                    assert_eq!($value, round_trip,
+                            "[3] DB value mismatch; given value: {:?}\n\
+                                     as returned: {:?}\n\
+                                     round-trip: {:?}",
+                                    $value, returned, round_trip);
+                )+
+
+                Ok(())
+            }
+        }
+    };
+}
+
+#[cfg("_rt-wasm-bindgen")]
+#[macro_export]
+macro_rules! __test_prepared_type {
+    ($name:ident<$ty:ty>($db:ident, $sql:expr, $($text:literal == $value:expr),+ $(,)?)) => {
+        paste::item! {
+            #[wasm_bindgen_test]
+            async fn [< test_prepared_type_ $name >] () {
+                use sqlx::Row;
+
+                let mut conn = new::<$db>().await?;
 
                 $(
                     let query = format!($sql, $text);
