@@ -14,7 +14,6 @@ test_type!(bool<bool>(Postgres,
     "true::boolean" == true
 ));
 
-/*
 test_type!(bool_vec<Vec<bool>>(Postgres,
     "array[true,false,true]::bool[]" == vec![true, false, true],
 ));
@@ -35,7 +34,6 @@ test_prepared_type!(byte_slice<&[u8]>(Postgres,
     "E'\\\\x0000000052'::bytea"
         == &[0_u8, 0, 0, 0, 0x52][..]
 ));
-*/
 test_type!(str<&str>(Postgres,
     "'this is foo'" == "this is foo",
     "''" == "",
@@ -48,6 +46,7 @@ test_type!(string<String>(Postgres,
     "'this is foo'" == format!("this is foo"),
 ));
 
+/*
 test_type!(string_vec<Vec<String>>(Postgres,
     "array['one','two','three']::text[]"
         == vec!["one","two","three"],
@@ -64,6 +63,7 @@ test_type!(i8(
     "0::\"char\"" == 0_i8,
     "120::\"char\"" == 120_i8,
 ));
+*/
 
 test_type!(u32(Postgres, "325235::oid" == 325235_u32,));
 
