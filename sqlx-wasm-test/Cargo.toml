@@ -18,6 +18,7 @@ instant = "0.1.9"
 web-sys = { version = "0.3.50", features = ["console", "Performance"] }
 futures = "0.3.14"
 serde_json = { version = "1.0.51", features = ["raw_value"] }
+paste = "1.0.1"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.0"
@@ -41,4 +42,8 @@ path = "src/deletes_bench.rs"
 [[test]]
 name = "pg_wasm_tests"
 path = "src/pg_wasm_tests.rs"
+
+[[test]]
+name = "pg_types_tests"
+path = "src/pg_types_tests.rs"
 
