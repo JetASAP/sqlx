@@ -221,6 +221,24 @@ macro_rules! __test_prepared_type {
     };
 }
 
+// Test type encoding and decoding
+#[macro_export]
+macro_rules! test_prepared_type {
+    ($name:ident<$ty:ty>($db:ident, $sql:literal, $($text:literal == $value:expr),+ $(,)?)) => {
+        $crate::__test_prepared_type!($name<$ty>($db, $sql, $($text == $value),+));
+    };
+
+    ($name:ident<$ty:ty>($db:ident, $($text:literal == $value:expr),+ $(,)?)) => {
+        paste::item! {
+            $crate::__test_prepared_type!($name<$ty>($db, $crate::[< $db _query_for_test_prepared_type >]!(), $($text == $value),+));
+        }
+    };
+
+    ($name:ident($db:ident, $($text:literal == $value:expr),+ $(,)?)) => {
+        $crate::__test_prepared_type!($name<$name>($db, $($text == $value),+));
+    };
+}
+
 #[macro_export]
 macro_rules! Postgres_query_for_test_prepared_type {
     () => {
