@@ -163,7 +163,7 @@ macro_rules! test_unprepared_type {
                 $(
                     let query = format!("SELECT {}", $text);
                     let mut s = conn.fetch(&*query);
-                    let row = s.try_next().await.unwrap();
+                    let row = s.try_next().await.unwrap().unwrap();
                     let rec = row.try_get::<$ty, _>(0).unwrap();
 
                     assert!($value == rec);
