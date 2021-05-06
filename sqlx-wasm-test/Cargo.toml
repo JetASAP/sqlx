@@ -39,7 +39,7 @@ name = "deletes"
 path = "src/deletes_bench.rs"
 
 [[test]]
-name = "select_queries"
+name = "pg_wasm_tests"
 path = "src/pg_wasm_tests.rs"
 
 [[test]]
