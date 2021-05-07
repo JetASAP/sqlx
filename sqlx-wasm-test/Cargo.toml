@@ -47,3 +47,6 @@ path = "src/pg_wasm_tests.rs"
 name = "pg_types_tests"
 path = "src/pg_types_tests.rs"
 
+[[test]]
+name = "pg_types_tests_2"
+path = "src/pg_types_tests_2.rs"
