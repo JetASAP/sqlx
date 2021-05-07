@@ -150,6 +150,18 @@ macro_rules! test_type {
 }
 
 #[macro_export]
+macro_rules! test_decode_type {
+    ($name:ident<$ty:ty>($db:ident, $($text:literal == $value:expr),+ $(,)?)) => {
+        $crate::__test_prepared_decode_type!($name<$ty>($db, $($text == $value),+));
+        $crate::test_unprepared_type!($name<$ty>($db, $($text == $value),+));
+    };
+
+    ($name:ident($db:ident, $($text:literal == $value:expr),+ $(,)?)) => {
+        $crate::test_decode_type!($name<$name>($db, $($text == $value),+));
+    };
+}
+
+#[macro_export]
 macro_rules! test_unprepared_type {
     ($name:ident<$ty:ty>($db:ident, $($text:literal == $value:expr),+ $(,)?)) => {
         paste::item! {
@@ -236,6 +248,33 @@ macro_rules! test_prepared_type {
 
     ($name:ident($db:ident, $($text:literal == $value:expr),+ $(,)?)) => {
         $crate::__test_prepared_type!($name<$name>($db, $($text == $value),+));
+    };
+}
+
+// Test type decoding only for the prepared query API
+#[macro_export]
+macro_rules! __test_prepared_decode_type {
+    ($name:ident<$ty:ty>($db:ident, $($text:literal == $value:expr),+ $(,)?)) => {
+        paste::item! {
+            #[wasm_bindgen_test::wasm_bindgen_test]
+            async fn [< test_prepared_decode_type_ $name >] () {
+                use sqlx::Row;
+
+                let mut conn = sqlx_wasm_test::new().await;
+
+                $(
+                    let query = format!("SELECT {}", $text);
+
+                    let row = sqlx::query(&query)
+                        .fetch_one(&mut conn)
+                        .await.unwrap();
+
+                    let rec: $ty = row.try_get(0).unwrap();
+
+                    assert!($value == rec);
+                )+
+            }
+        }
     };
 }
 

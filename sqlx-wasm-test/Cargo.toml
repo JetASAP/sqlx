@@ -54,3 +54,7 @@ path = "src/pg_types_tests_2.rs"
 [[test]]
 name = "pg_types_tests_3"
 path = "src/pg_types_tests_3.rs"
+
+[[test]]
+name = "pg_types_tests_4"
+path = "src/pg_types_tests_4.rs"
