@@ -1,9 +1,6 @@
 use sqlx::postgres::Postgres;
 use sqlx_wasm_test::{test_prepared_type, test_type};
 
-/*
-*/
-
 test_type!(i8(
     Postgres,
     "0::\"char\"" == 0_i8,

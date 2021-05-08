@@ -17,6 +17,7 @@ wasm-bindgen-test = "0.3.0"
 instant = "0.1.9"
 web-sys = { version = "0.3.50", features = ["console", "Performance"] }
 futures = "0.3.14"
+serde = "1.0.117"
 serde_json = { version = "1.0.51", features = ["raw_value"] }
 paste = "1.0.1"
 time = { version = "0.2.26" }
@@ -76,3 +77,7 @@ path = "src/pg_types_tests_chrono.rs"
 [[test]]
 name = "pg_types_tests_time"
 path = "src/pg_types_tests_time.rs"
+
+[[test]]
+name = "pg_types_tests_json"
+path = "src/pg_types_tests_json.rs"
