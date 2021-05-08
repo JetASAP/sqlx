@@ -2622,6 +2622,7 @@ dependencies = [
  "paste",
  "serde_json",
  "sqlx",
+ "time 0.2.26",
  "wasm-bindgen",
  "wasm-bindgen-futures 0.3.27",
  "wasm-bindgen-test",

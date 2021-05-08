@@ -9,7 +9,7 @@ crate-type = ["cdylib", "rlib"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-sqlx = { path = "..", features = ["postgres", "chrono", "bit-vec", "ipnetwork", "uuid", "json", "runtime-wasm-bindgen"] }
+sqlx = { path = "..", features = ["postgres", "time", "chrono", "bit-vec", "ipnetwork", "uuid", "json", "runtime-wasm-bindgen"] }
 wasm-bindgen-futures = { version = "^0.3", features = ["futures_0_3"] }
 wasm-bindgen = { version = "0.2.73" }
 ws_stream_wasm = "0.7"
@@ -19,9 +19,7 @@ web-sys = { version = "0.3.50", features = ["console", "Performance"] }
 futures = "0.3.14"
 serde_json = { version = "1.0.51", features = ["raw_value"] }
 paste = "1.0.1"
-
-[dev-dependencies]
-wasm-bindgen-test = "0.3.0"
+time = { version = "0.2.26" }
 
 [[test]]
 name = "selects"
@@ -74,3 +72,7 @@ path = "src/pg_types_tests_bitvec.rs"
 [[test]]
 name = "pg_types_tests_chrono"
 path = "src/pg_types_tests_chrono.rs"
+
+[[test]]
+name = "pg_types_tests_time"
+path = "src/pg_types_tests_time.rs"
