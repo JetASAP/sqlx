@@ -97,3 +97,7 @@ path = "src/pg_types_tests_money.rs"
 [[test]]
 name = "pg_types_tests_range"
 path = "src/pg_types_tests_range.rs"
+
+[[test]]
+name = "pg_types_tests_interval"
+path = "src/pg_types_tests_interval.rs"
