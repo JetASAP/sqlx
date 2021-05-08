@@ -289,6 +289,10 @@ async fn it_supports_domain_types_in_composite_domain_types() {
     }
 }
 
+<<<<<<< Updated upstream:sqlx-wasm-test/src/pg_wasm_tests.rs
+=======
+#[cfg(feature = "json")]
+>>>>>>> Stashed changes:sqlx-wasm-test/src/selects_tests.rs
 #[wasm_bindgen_test]
 async fn it_describes_and_inserts_json_and_jsonb() {
     let mut conn = new().await;
@@ -313,6 +317,7 @@ async fn it_describes_and_inserts_json_and_jsonb() {
 
     assert_eq!(done.rows_affected(), 1);
 }
+<<<<<<< Updated upstream:sqlx-wasm-test/src/pg_wasm_tests.rs
 
 #[wasm_bindgen_test]
 async fn test_listener_cleanup() {
@@ -331,3 +336,5 @@ async fn test_listener_cleanup() {
         "Notification sent and received"
     );
 }
+=======
+>>>>>>> Stashed changes:sqlx-wasm-test/src/selects_tests.rs
