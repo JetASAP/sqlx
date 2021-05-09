@@ -1,4 +1,20 @@
-use sqlx_wasm_test::test_type;
+use sqlx_wasm_test::test_unprepared_type;
+
+macro_rules! test_type {
+    ($name:ident<$ty:ty>($db:ident, $sql:literal, $($text:literal == $value:expr),+ $(,)?)) => {
+        $crate::test_unprepared_type!($name<$ty>($db, $($text == $value),+));
+    };
+
+    ($name:ident<$ty:ty>($db:ident, $($text:literal == $value:expr),+ $(,)?)) => {
+        paste::item! {
+            $crate::test_unprepared_type!($name<$ty>($db, $($text == $value),+));
+        }
+    };
+
+    ($name:ident($db:ident, $($text:literal == $value:expr),+ $(,)?)) => {
+        $crate::test_type!($name<$name>($db, $($text == $value),+));
+    };
+}
 
 test_type!(ipnetwork<sqlx::types::ipnetwork::IpNetwork>(Postgres,
     "'127.0.0.1'::inet"
@@ -34,3 +50,4 @@ test_type!(ipnetwork_vec<Vec<sqlx::types::ipnetwork::IpNetwork>>(Postgres,
            "8.8.8.8/24".parse::<sqlx::types::ipnetwork::IpNetwork>().unwrap()
         ]
 ));
+
