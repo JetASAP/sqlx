@@ -1,4 +1,3 @@
-use sqlx::postgres::Postgres;
 use sqlx_wasm_test::test_type;
 
 use std::str::FromStr;

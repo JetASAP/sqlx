@@ -1,4 +1,3 @@
-use sqlx::postgres::Postgres;
 use sqlx_wasm_test::test_decode_type;
 
 test_decode_type!(bool_tuple<(bool,)>(Postgres, "row(true)" == (true,)));

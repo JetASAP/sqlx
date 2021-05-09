@@ -1,5 +1,3 @@
-// use super::*;
-use sqlx::postgres::Postgres;
 use sqlx::types::chrono::{
     DateTime, FixedOffset, NaiveDate, NaiveDateTime, NaiveTime, TimeZone, Utc,
 };

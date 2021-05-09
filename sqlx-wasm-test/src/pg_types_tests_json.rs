@@ -1,7 +1,6 @@
 use serde_json::value::RawValue as JsonRawValue;
 use serde_json::{json, Value as JsonValue};
 use sqlx::postgres::PgRow;
-use sqlx::postgres::Postgres;
 use sqlx::types::Json;
 use sqlx::{Executor, Row};
 use sqlx_wasm_test::test_type;

@@ -1,4 +1,3 @@
-use sqlx::postgres::Postgres;
 use sqlx_wasm_test::{test_prepared_type, test_type};
 
 // BYTEA cannot be decoded by-reference from a simple query as postgres sends it as hex

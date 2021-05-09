@@ -7,13 +7,11 @@ async fn insert_query_small() {
     time_insert_query!("small", 100u32);
 }
 
-#[ignore]
 #[wasm_bindgen_test]
 async fn insert_query_medium() {
     time_insert_query!("medium", 1000u32);
 }
 
-#[ignore]
 #[wasm_bindgen_test]
 async fn insert_query_large() {
     time_insert_query!("large", 10000u32);

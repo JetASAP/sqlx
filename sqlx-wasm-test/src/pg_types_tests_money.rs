@@ -1,4 +1,3 @@
-use sqlx::postgres::Postgres;
 use sqlx_wasm_test::test_prepared_type;
 
 use sqlx::postgres::types::PgMoney;

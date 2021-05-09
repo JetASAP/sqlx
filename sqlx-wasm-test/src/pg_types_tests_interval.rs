@@ -1,5 +1,4 @@
 use sqlx::postgres::types::PgInterval;
-use sqlx::postgres::Postgres;
 use sqlx_wasm_test::test_prepared_type;
 
 test_prepared_type!(interval<PgInterval>(
