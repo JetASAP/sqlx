@@ -1,3 +1,4 @@
+/*
 #[cfg(not(any(
     feature = "runtime-actix-native-tls",
     feature = "runtime-async-std-native-tls",
@@ -5,14 +6,14 @@
     feature = "runtime-actix-rustls",
     feature = "runtime-async-std-rustls",
     feature = "runtime-tokio-rustls",
-    feature = "runtime-wasm-bindgen",
-)))]
+    )
+))]
 compile_error!(
     "one of the features ['runtime-actix-native-tls', 'runtime-async-std-native-tls', \
      'runtime-tokio-native-tls', 'runtime-actix-rustls', 'runtime-async-std-rustls', \
      'runtime-tokio-rustls'] must be enabled"
 );
-
+*/
 #[cfg(any(
     all(feature = "_rt-actix", feature = "_rt-async-std"),
     all(feature = "_rt-actix", feature = "_rt-tokio"),
@@ -137,7 +138,7 @@ macro_rules! blocking {
 
 #[cfg(all(
     feature = "_rt-async-std",
-    not(any(feature = "_rt-actix", feature = "_rt-tokio", feature = "_rt-wasm-bindgen")),
+    not(any(feature = "_rt-actix", feature = "_rt-tokio")),
 ))]
 pub use async_std::{
     self, fs, future::timeout, io::prelude::ReadExt as AsyncReadExt,
@@ -198,7 +199,7 @@ pub use async_rustls::{client::TlsStream, TlsConnector};
 //
 // wasm-bindgen
 //
-#[cfg(feature = "_rt-wasm-bindgen")]
+#[cfg(target_arch = "wasm32")]
 pub use {
     async_io_stream::IoStream,
     futures_util::{
