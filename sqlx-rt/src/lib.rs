@@ -1,4 +1,3 @@
-/*
 #[cfg(not(any(
     feature = "runtime-actix-native-tls",
     feature = "runtime-async-std-native-tls",
@@ -13,7 +12,7 @@ compile_error!(
      'runtime-tokio-native-tls', 'runtime-actix-rustls', 'runtime-async-std-rustls', \
      'runtime-tokio-rustls'] must be enabled"
 );
-*/
+
 #[cfg(any(
     all(feature = "_rt-actix", feature = "_rt-async-std"),
     all(feature = "_rt-actix", feature = "_rt-tokio"),
@@ -203,7 +202,7 @@ pub use async_rustls::{client::TlsStream, TlsConnector};
 pub use {
     async_io_stream::IoStream,
     futures_util::{
-        io::{AsyncRead, AsyncReadExt, AsyncWrite, AsyncWriteExt},
+        
         pin_mut,
         sink::Sink,
     },
